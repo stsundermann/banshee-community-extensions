@@ -2,8 +2,12 @@ AC_DEFUN([BCE_CLUTTERFLOW],
 [
 	BCE_ARG_DISABLE([ClutterFlow], [try])
 
+	BCE_CHECK_EXTENSION_DEP([ClutterFlow], [COGL_SHARP],
+		[cogl-sharp-1.0],
+		[cogl-sharp was not found. Please install cogl-sharp or disable the ClutterFlow extension by passing --disable-clutterflow])
+
 	BCE_CHECK_EXTENSION_DEP([ClutterFlow], [CLUTTER_SHARP],
-		[clutter-sharp clutter-gtk-sharp],
+		[clutter-sharp-1.0],
 		[clutter-sharp was not found. Please install clutter-sharp or disable the ClutterFlow extension by passing --disable-clutterflow])
 
 	BCE_CHECK_EXTENSION_DEP([ClutterFlow], [BANSHEE_NOWPLAYING],
