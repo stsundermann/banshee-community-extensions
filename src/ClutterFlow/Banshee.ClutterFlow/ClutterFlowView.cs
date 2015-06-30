@@ -48,11 +48,11 @@ using Banshee.ClutterFlow.Buttons;
 namespace Banshee.ClutterFlow
 {
 
-    public class ClutterFlowView : Clutter.Embed
+	public class ClutterFlowView : Clutter.GTK.Embed
     {
         #region Fields
         #region Active/Current Album Related
-        public event EventHandler UpdatedAlbum;
+        public event System.EventHandler UpdatedAlbum;
 
         private AlbumInfo activeAlbum = null;
         public AlbumInfo ActiveAlbum {
@@ -226,9 +226,9 @@ namespace Banshee.ClutterFlow
                     }
 
                     if (viewportAngleX < -1f && viewportAngleX > -9f) {
-                        cover_manager.SetRotation(RotateAxis.Y, -5f, cover_manager.Width*0.5f,cover_manager.Height*0.5f,cover_manager.Behaviour.ZFar);
+                        cover_manager.SetRotation(RotateAxis.YAxis, -5f, cover_manager.Width*0.5f,cover_manager.Height*0.5f,cover_manager.Behaviour.ZFar);
                     } else {
-                        cover_manager.SetRotation(RotateAxis.X, viewportAngleX, cover_manager.Width*0.5f,cover_manager.Height*0.5f,cover_manager.Behaviour.ZFar);
+                        cover_manager.SetRotation(RotateAxis.XAxis, viewportAngleX, cover_manager.Width*0.5f,cover_manager.Height*0.5f,cover_manager.Behaviour.ZFar);
                     }
                 }
             }
@@ -247,9 +247,9 @@ namespace Banshee.ClutterFlow
                     }
 
                     if (viewportAngleY > -4f && viewportAngleY < 4f) {
-                        cover_manager.SetRotation(RotateAxis.Y, 0, cover_manager.Width*0.5f,cover_manager.Height*0.5f,cover_manager.Behaviour.ZFar);
+                        cover_manager.SetRotation(RotateAxis.YAxis, 0, cover_manager.Width*0.5f,cover_manager.Height*0.5f,cover_manager.Behaviour.ZFar);
                     } else {
-                        cover_manager.SetRotation(RotateAxis.Y, viewportAngleY, cover_manager.Width*0.5f,cover_manager.Height*0.5f,cover_manager.Behaviour.ZFar);
+                        cover_manager.SetRotation(RotateAxis.YAxis, viewportAngleY, cover_manager.Width*0.5f,cover_manager.Height*0.5f,cover_manager.Behaviour.ZFar);
                     }
                 }
             }
@@ -282,10 +282,10 @@ namespace Banshee.ClutterFlow
             attached = true;
 
             Stage.AllocationChanged += HandleAllocationChanged;
-            Stage.ScrollEvent += HandleScroll;
-            Stage.ButtonReleaseEvent += HandleButtonReleaseEvent;
-            Stage.ButtonPressEvent += HandleButtonPressEvent;
-            Stage.MotionEvent += HandleMotionEvent;
+            Stage.Scrolled += HandleScroll;
+            Stage.ButtonReleased += HandleButtonReleaseEvent;
+            Stage.ButtonPressed += HandleButtonPressEvent;
+            Stage.Motion += HandleMotionEvent;
             cover_manager.ActorActivated += HandleActorActivated;
         }
 
@@ -295,17 +295,17 @@ namespace Banshee.ClutterFlow
                 return;
 
             Stage.AllocationChanged -= HandleAllocationChanged;
-            Stage.ScrollEvent -= HandleScroll;
-            Stage.ButtonReleaseEvent -= HandleButtonReleaseEvent;
-            Stage.ButtonPressEvent -= HandleButtonPressEvent;
-            Stage.MotionEvent -= HandleMotionEvent;
+            Stage.Scrolled -= HandleScroll;
+            Stage.ButtonReleased -= HandleButtonReleaseEvent;
+            Stage.ButtonPressed -= HandleButtonPressEvent;
+            Stage.Motion -= HandleMotionEvent;
             cover_manager.ActorActivated -= HandleActorActivated;
 
             attached = false;
         }
 
         protected bool disposed = false;
-        public override void Dispose ()
+        public void Dispose ()
         {
             if (disposed) {
                 return;
@@ -320,9 +320,9 @@ namespace Banshee.ClutterFlow
 
         protected void SetupViewport ()
         {
-            Stage.Color = new Clutter.Color (0x00, 0x00, 0x00, 0xff);
-            cover_manager.SetRotation (RotateAxis.X, viewportAngleX, Stage.Width/2, Stage.Height/2,0);
-            Stage.Add (cover_manager);
+            Stage.BackgroundColor = Clutter.Color.New (0x00, 0x00, 0x00, 0xff);
+            cover_manager.SetRotation (RotateAxis.XAxis, viewportAngleX, Stage.Width/2, Stage.Height/2,0);
+            Stage.AddActor (cover_manager);
 
             cover_manager.EmptyActor.SetToPb (
                 IconThemeUtils.LoadIcon (cover_manager.TextureSize, "gtk-stop", "clutterflow-large.png")
@@ -335,15 +335,15 @@ namespace Banshee.ClutterFlow
         protected void SetupSlider ()
         {
             slider = new ClutterFlowSlider (400, 40, cover_manager);
-            Stage.Add (slider);
+            Stage.AddActor (slider);
         }
 
         protected void SetupLabels () {
-            caption_cover = new CoverCaption (cover_manager, "Sans Bold 10", new Clutter.Color(1.0f,1.0f,1.0f,1.0f));
-            Stage.Add (caption_cover);
+            caption_cover = new CoverCaption (cover_manager, "Sans Bold 10", Clutter.Color.New (1.0f,1.0f,1.0f,1.0f));
+            Stage.AddActor (caption_cover);
 
-            caption_track = new TrackCaption (cover_manager, "Sans Bold 10", new Clutter.Color(1.0f,1.0f,1.0f,1.0f));
-            Stage.Add (caption_track);
+            caption_track = new TrackCaption (cover_manager, "Sans Bold 10", Clutter.Color.New (1.0f,1.0f,1.0f,1.0f));
+            Stage.AddActor (caption_track);
         }
 
         protected void SetupWidgetBar ()
@@ -354,7 +354,7 @@ namespace Banshee.ClutterFlow
 
             widget_bar = new ClutterWidgetBar (new Actor[] { pm_button, fs_button, sort_button });
             widget_bar.ShowAll ();
-            Stage.Add (widget_bar);
+            Stage.AddActor (widget_bar);
             widget_bar.SetPosition (5, 5);
         }
         #endregion
@@ -375,8 +375,8 @@ namespace Banshee.ClutterFlow
         protected void RedrawViewport ()
         {
             cover_manager.UpdateBehaviour ();
-            cover_manager.SetRotation (RotateAxis.X, viewportAngleX, cover_manager.Width*0.5f, cover_manager.Height*0.5f,0);
-            if (!cover_manager.IsVisible) {
+            cover_manager.SetRotation (RotateAxis.XAxis, viewportAngleX, cover_manager.Width*0.5f, cover_manager.Height*0.5f,0);
+            if (!cover_manager.Visible) {
                 cover_manager.Show ();
             }
             cover_manager.LowerBottom ();
@@ -410,7 +410,7 @@ namespace Banshee.ClutterFlow
         }
 
 
-        private void HandleActorActivated (ClutterFlowBaseActor actor, EventArgs e)
+        private void HandleActorActivated (ClutterFlowBaseActor actor, System.EventArgs e)
         {
             var album_actor = actor as ClutterFlowAlbum;
             if (album_actor != null) {
@@ -418,58 +418,58 @@ namespace Banshee.ClutterFlow
             }
         }
 
-        private void HandleButtonPressEvent (object o, Clutter.ButtonPressEventArgs args)
+        private void HandleButtonPressEvent (object o, Clutter.ButtonPressedArgs args)
         {
-            Clutter.EventHelper.GetCoords (args.Event, out drag_x0, out drag_y0);
+            args.Event.GetCoords (out drag_x0, out drag_y0);
             args.RetVal = true;
         }
 
-        void HandleButtonReleaseEvent (object o, Clutter.ButtonReleaseEventArgs args)
+        void HandleButtonReleaseEvent (object o, Clutter.ButtonReleasedArgs args)
         {
             //if (args.Event.Button==1 && !dragging  && coverManager.CurrentCover!=null && ActiveAlbum != CurrentAlbum)
             //    UpdateAlbum ();
             if (dragging) {
-                Clutter.Ungrab.Pointer ();
+                Clutter.Global.UngrabPointer ();
             }
             dragging = false;
             args.RetVal = true;
         }
 
-        private void HandleMotionEvent (object o, Clutter.MotionEventArgs args)
+        private void HandleMotionEvent (object o, Clutter.MotionArgs args)
         {
-            if ((args.Event.ModifierState.value__ & Clutter.ModifierType.Button1Mask.value__) != 0) {
+            if ((args.Event.State & Clutter.ModifierType.Button1Mask) != 0) {
                 float drag_x; float drag_y;
-                Clutter.EventHelper.GetCoords (args.Event, out drag_x, out drag_y);
+                args.Event.GetCoords (out drag_x, out drag_y);
                 if (!dragging) {
                     if (Math.Abs(drag_x0 - drag_x) > 2 && Math.Abs(drag_y0 - drag_y) > 2) {
                         start_index = CoverManager.TargetIndex;
-                        Clutter.Grab.Pointer (Stage);
+                        Clutter.Global.GrabPointer (Stage);
                         dragging = true;
                     }
                 } else {
-                    if ((args.Event.ModifierState.value__ & Clutter.ModifierType.ControlMask.value__)!=0) {
+                    if ((args.Event.State & Clutter.ModifierType.ControlMask)!=0) {
                         if (!dragging) {
-                            Clutter.Grab.Pointer (Stage);
+                            Clutter.Global.GrabPointer (Stage);
                         }
-                        ViewportAngleY += (float) (mouse_x - args.Event.X)*rotSens;
-                        ViewportAngleX += (float) (mouse_y - args.Event.Y)*rotSens;
+                        ViewportAngleY += (float) (mouse_x - ((MotionEvent)args.Event).X)*rotSens;
+                        ViewportAngleX += (float) (mouse_y - ((MotionEvent)args.Event).Y)*rotSens;
                     } else {
                         CoverManager.TargetIndex = start_index + (int) ((drag_x0 - drag_x)*drag_sens);
                     }
                 }
             } else {
                 if (dragging) {
-                    Clutter.Ungrab.Pointer ();
+                    Clutter.Global.UngrabPointer ();
                 }
                 dragging = false;
             }
-            mouse_x = args.Event.X;
-            mouse_y = args.Event.Y;
+            mouse_x = ((MotionEvent)args.Event).X;
+            mouse_y = ((MotionEvent)args.Event).Y;
 
             args.RetVal = dragging;
         }
 
-        private void HandleScroll (object o, Clutter.ScrollEventArgs args)
+        private void HandleScroll (object o, Clutter.ScrolledArgs args)
         {
             if (args.Event.Direction == Clutter.ScrollDirection.Down
                 || args.Event.Direction == Clutter.ScrollDirection.Left) {
@@ -514,16 +514,16 @@ namespace Banshee.ClutterFlow
             ActiveAlbum = actor.Album;
             ActiveIndex = actor.Index;
             if (UpdatedAlbum != null) {
-                UpdatedAlbum (ActiveAlbum, EventArgs.Empty);
+                UpdatedAlbum (ActiveAlbum, System.EventArgs.Empty);
             }
         }
 
-        protected void OnModelClearedHandler (object o, EventArgs args)
+        protected void OnModelClearedHandler (object o, System.EventArgs args)
         {
             CoverManager.ReloadCovers ();
         }
 
-        protected void OnModelReloadedHandler (object o, EventArgs args)
+        protected void OnModelReloadedHandler (object o, System.EventArgs args)
         {
             if (model_count != album_loader.Model.Count) {
                 model_count = album_loader.Model.Count;

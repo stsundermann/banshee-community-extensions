@@ -90,7 +90,7 @@ namespace Banshee.ClutterFlow
             artwork_lookup.Enqueue(this);
         }
 
-        public override void Dispose ()
+        public void Dispose ()
         {
             if (artwork_lookup != null) {
                 artwork_lookup.Dispose ();

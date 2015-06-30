@@ -40,7 +40,7 @@ namespace ClutterFlow.Captions
             get { return defaultValue; }
             set {
                 if (value!=defaultValue) {
-                    if (Value==defaultValue) Value = value;
+                    if (TextProp==defaultValue) TextProp = value;
                     defaultValue = value;
                 }
             }
@@ -54,7 +54,7 @@ namespace ClutterFlow.Captions
             CoverManager.CoversChanged += HandleCoversChanged;
         }
 
-        public override void Dispose ()
+        public void Dispose ()
         {
             CoverManager.NewCurrentCover -= HandleNewCurrentCover;
             CoverManager.TargetIndexChanged -= HandleTargetIndexChanged;
@@ -83,29 +83,29 @@ namespace ClutterFlow.Captions
         {
             //Console.WriteLine ("SetTextFromCover called");
             if (cover!=null && cover.Label!="")
-                Value = cover.Label;
+                TextProp = cover.Label;
             else
-                Value = DefaultValue;
+                TextProp = DefaultValue;
         }
         #endregion
 
         #region Event Handling
-        protected virtual void HandleNewCurrentCover (ClutterFlowBaseActor cover, EventArgs e)
+        protected virtual void HandleNewCurrentCover (ClutterFlowBaseActor cover, System.EventArgs e)
         {
             if (Opacity>0) FadeOut ();
             Update ();
-            if (IsVisible) FadeIn ();
+            if (Visible) FadeIn ();
         }
 
-        protected virtual void HandleTargetIndexChanged (object sender, EventArgs e)
+        protected virtual void HandleTargetIndexChanged (object sender, System.EventArgs e)
         {
-            if (IsVisible) FadeOut ();
+            if (Visible) FadeOut ();
         }
 
-        protected virtual void HandleCoversChanged(object sender, EventArgs e)
+        protected virtual void HandleCoversChanged(object sender, System.EventArgs e)
         {
             Update ();
-            if (IsVisible) FadeIn ();
+            if (Visible) FadeIn ();
         }
         #endregion
     }

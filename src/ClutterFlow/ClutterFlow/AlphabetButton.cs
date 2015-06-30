@@ -38,7 +38,7 @@ namespace ClutterFlow.Alphabet
             set {
                 if (letter!=value) {
                     letter = value;
-                    label.Value = ((char) letter).ToString ();
+                    label.TextProp = ((char) letter).ToString ();
                     Update ();
                 }
             }
@@ -77,7 +77,7 @@ namespace ClutterFlow.Alphabet
             this.BubbleEvents = !Disabled;
 
             label = new Text(GetFontName (), ((char) letter).ToString (), GetFontColor ());
-            Add (label);
+            AddActor (label);
             Update ();
         }
 
@@ -92,7 +92,7 @@ namespace ClutterFlow.Alphabet
             label.FontName = GetFontName ();
             label.SetAnchorPoint (label.Width*0.5f, label.Height*0.5f+2);
             label.SetPosition (this.Width*0.5f,this.Height*0.5f);
-            label.SetColor (GetFontColor ());
+            label.Color = GetFontColor ();
             label.ShowAll();
         }
 
@@ -107,10 +107,10 @@ namespace ClutterFlow.Alphabet
         {
             if (colors==null) {
                 colors = new Clutter.Color[4];
-                colors[0] = new Clutter.Color (1.0f, 1.0f, 1.0f, 0.6f);
-                colors[1] = new Clutter.Color (1.0f, 1.0f, 1.0f, 0.75f);
-                colors[2] = new Clutter.Color (1.0f, 1.0f, 1.0f, 0.9f);
-                colors[3] = new Clutter.Color (0.0f, 0.0f, 0.0f, 0.75f);
+                colors[0] = Clutter.Color.New (1.0f, 1.0f, 1.0f, 0.6f);
+                colors[1] = Clutter.Color.New (1.0f, 1.0f, 1.0f, 0.75f);
+                colors[2] = Clutter.Color.New (1.0f, 1.0f, 1.0f, 0.9f);
+                colors[3] = Clutter.Color.New (0.0f, 0.0f, 0.0f, 0.75f);
             }
             if (state>=4)
                 return colors[3];

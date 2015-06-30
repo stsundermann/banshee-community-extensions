@@ -73,10 +73,10 @@ namespace ClutterFlow
         public ClutterWidgetBar (Actor[] actors) : base ()
         {
             foreach (Actor actor in actors) {
-                this.Add (actor);
+                this.AddActor (actor);
             }
             text = new CairoTexture ((uint) Width,(uint) Height);
-            this.Add (text);
+            this.AddActor (text);
 
             UpdatePositions ();
 
@@ -99,7 +99,7 @@ namespace ClutterFlow
             /* TODO: variable heights need to be handled */
             float x = marginX; float y = marginY;
             text.Hide ();
-            foreach (Actor actor in this) {
+            foreach (Actor actor in Children) {
                 if (actor!=text) {
                     actor.Hide ();
                     actor.SetPosition (x, y);

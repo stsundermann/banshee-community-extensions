@@ -36,18 +36,18 @@ namespace ClutterFlow.Buttons
     {
         protected Clutter.Text label;
         public string Label {
-            get { return label.Value; }
+            get { return label.TextProp; }
             set {
-                if (value!=label.Value) {
-                    label.Value = value;
+                if (value!=label.TextProp) {
+                    label.TextProp = value;
                     Update ();
                 }
             }
         }
 
         public ClutterSliderHandleButton(uint width, uint height, int state) : base(width, height, state) {
-            label = new Text("Sans Bold 10", "", new Clutter.Color(0.0f,0.0f,0.0f,0.8f));
-            Add (label);
+            label = new Text("Sans Bold 10", "", Clutter.Color.New (0.0f,0.0f,0.0f,0.8f));
+            AddActor (label);
             label.SetAnchorPoint (label.Width*0.5f, label.Height*0.5f);
             label.SetPosition (this.Width*0.5f,this.Height*0.5f);
             label.ShowAll();

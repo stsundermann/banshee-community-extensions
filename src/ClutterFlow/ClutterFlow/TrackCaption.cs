@@ -38,7 +38,7 @@ namespace ClutterFlow.Captions
             get { return defaultValue; }
             set {
                 if (value!=defaultValue) {
-                    if (Value==defaultValue) Value = value;
+                    if (TextProp==defaultValue) TextProp = value;
                     defaultValue = value;
                 }
             }
@@ -53,16 +53,16 @@ namespace ClutterFlow.Captions
 
         public override void FadeIn ()
         {
-            EventHandler hFadeIn = delegate (object sender, EventArgs e) {
-                this.Value = new_caption;
+            System.EventHandler hFadeIn = delegate (object sender, System.EventArgs e) {
+                this.TextProp = new_caption;
                 this.UpdatePosition ();
-                this.Animatev ((ulong) AnimationMode.Linear.value__, (uint) (CoverManager.MaxAnimationSpan*0.5f), new string[] { "opacity" }, new GLib.Value ((byte) 255));
+                this.Animatev ((ulong) AnimationMode.Linear, (uint) (CoverManager.MaxAnimationSpan*0.5f), new string[] { "opacity" }, new GLib.Value[] {new GLib.Value ((byte) 255)});
                 aFade = null;
             };
             if (aFade!=null && aFade.Timeline.IsPlaying) {
                 aFade.Completed +=  hFadeIn;
             } else {
-                hFadeIn (this, EventArgs.Empty);
+                hFadeIn (this, System.EventArgs.Empty);
             }
         }
 

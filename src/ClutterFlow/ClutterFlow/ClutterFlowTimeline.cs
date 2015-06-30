@@ -31,7 +31,7 @@ using Clutter;
 namespace ClutterFlow
 {
 
-    public class NewFrameEventArgs : EventArgs
+    public class NewFrameEventArgs : System.EventArgs
     {
         public double Progress;
         public NewFrameEventArgs (double progress) : base ()
@@ -40,7 +40,7 @@ namespace ClutterFlow
         }
     }
 
-    public class TargetReachedEventArgs : EventArgs
+    public class TargetReachedEventArgs : System.EventArgs
     {
         public uint Target;
         public TargetReachedEventArgs (uint target) : base ()

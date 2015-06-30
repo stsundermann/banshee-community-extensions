@@ -29,6 +29,7 @@ using System;
 using Clutter;
 using Cairo;
 using Gdk;
+using Gtk;
 using ClutterFlow.Buttons;
 
 namespace ClutterFlow.Slider
@@ -38,12 +39,12 @@ namespace ClutterFlow.Slider
     {
         #region Events
         public event EventHandler<System.EventArgs> SliderHasMoved;
-        void HandleSliderHasMoved(object sender, EventArgs e)
+        void HandleSliderHasMoved(object sender, System.EventArgs e)
         {
             if (SliderHasMoved!=null) SliderHasMoved(this, System.EventArgs.Empty);
         }
         public event EventHandler<System.EventArgs> SliderHasChanged;
-        private void HandleSliderHasChanged(object sender, EventArgs e)
+        private void HandleSliderHasChanged(object sender, System.EventArgs e)
         {
             SetPostionFromIndexSilently(HandlePostionFromIndex);
             if (SliderHasChanged!=null) SliderHasChanged(this, System.EventArgs.Empty);
@@ -91,21 +92,21 @@ namespace ClutterFlow.Slider
             handle.SliderHasChanged += HandleSliderHasChanged;
             handle.SliderHasMoved += HandleSliderHasMoved;
             handle.BubbleEvents = true;
-            Add(handle);
+            AddActor(handle);
 
             outline = new CairoTexture (SliderWidth, (uint) Height);
-            Add(outline);
+            AddActor (outline);
             outline.SetAnchorPoint (outline.Width*0.5f, outline.Height*0.5f);
             outline.SetPosition (Width*0.5f, Height*0.5f);
 
             arrow_left = new ClutterArrowButton((uint) arrow_width,(uint) arrow_height, 0, 0x03);
-            arrow_left.ButtonPressEvent += HandleLeftArrowButtonPressEvent;
-            Add (arrow_left);
+            arrow_left.ButtonPressed += HandleLeftArrowButtonPressEvent;
+            AddActor (arrow_left);
             arrow_left.SetPosition (0,0);
 
             arrow_right = new ClutterArrowButton ((uint) arrow_width,(uint) arrow_height, 0, 0x01);
-            arrow_right.ButtonPressEvent += HandleRightArrowButtonPressEvent;
-            Add (arrow_right);
+            arrow_right.ButtonPressed += HandleRightArrowButtonPressEvent;
+            AddActor (arrow_right);
             arrow_right.SetPosition ((float) (Width-arrow_width),0);
 
             Update ();
@@ -142,14 +143,14 @@ namespace ClutterFlow.Slider
         #endregion
 
         #region Events
-        protected void HandleLeftArrowButtonPressEvent(object o, ButtonPressEventArgs args)
+        protected void HandleLeftArrowButtonPressEvent(object o, ButtonPressedArgs args)
         {
             if (args.Event.ClickCount==1 || args.Event.ClickCount%2!=1)
                 HandlePostionFromIndex -= 1;
             args.RetVal = true;
         }
 
-        protected void HandleRightArrowButtonPressEvent(object o, ButtonPressEventArgs args)
+        protected void HandleRightArrowButtonPressEvent(object o, ButtonPressedArgs args)
         {
             if (args.Event.ClickCount==1 || args.Event.ClickCount%2!=1)
                 HandlePostionFromIndex += 1;

@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using Clutter;
 using ClutterFlow.Buttons;
+using Gtk;
 
 namespace ClutterFlow.Alphabet
 {
 
-    public class AlphabetEventArgs : EventArgs
+    public class AlphabetEventArgs : System.EventArgs
     {
         protected AlphabetChars letter = AlphabetChars.unknown;
         public AlphabetChars Letter {
@@ -60,7 +61,7 @@ namespace ClutterFlow.Alphabet
         protected virtual void InitBackground ()
         {
             background = new CairoTexture ((uint) Width,(uint) Height);
-            Add (background);
+            AddActor (background);
 
             SetupBackground ();
             background.Show ();
@@ -124,8 +125,8 @@ namespace ClutterFlow.Alphabet
 
             foreach (AlphabetChars key in values) {
                 buttons[key] = new AlphabetButton (b_width, b_height, key);
-                buttons[key].ButtonReleaseEvent += HandleButtonReleaseEvent;
-                Add (buttons[key]);
+                buttons[key].ButtonReleased += HandleButtonReleaseEvent;
+                AddActor (buttons[key]);
                 buttons[key].SetAnchorPoint ((float) buttons[key].Width*0.5f, (float) buttons[key].Height*0.5f);
                 buttons[key].SetPosition (x, y);
                 x += x_step;
@@ -134,7 +135,7 @@ namespace ClutterFlow.Alphabet
         #endregion
 
         #region Event Handling
-        protected void HandleButtonReleaseEvent (object o, ButtonReleaseEventArgs args)
+        protected void HandleButtonReleaseEvent (object o, ButtonReleasedArgs args)
         {
             if (o is  AlphabetButton) {
                 InvokeLetterClicked ((o as AlphabetButton).Letter);

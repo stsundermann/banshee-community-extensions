@@ -42,7 +42,7 @@ namespace ClutterFlow
             get {
                 if (texture==null) {
                     texture = new Clutter.CairoTexture (cover_width, cover_width * 2);
-                    Add (texture);
+                    AddActor (texture);
                     texture.Show ();
                 }
                 return texture;
@@ -76,7 +76,7 @@ namespace ClutterFlow
         public ClutterFlowFixedActor (uint cover_width) : base ()
         {
             this.cover_width = cover_width;
-            IsReactive = false;
+            Reactive = false;
         }
 
         public void SetToPb (Gdk.Pixbuf pb)

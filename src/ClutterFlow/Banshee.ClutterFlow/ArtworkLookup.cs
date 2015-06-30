@@ -102,7 +102,7 @@ namespace Banshee.ClutterFlow
 
         private int new_focus = -1;
         private object focusLock = new object ();
-        protected void HandleTargetIndexChanged(object sender, EventArgs e)
+        protected void HandleTargetIndexChanged(object sender, System.EventArgs e)
         {
             //Log.Debug ("ArtworkLookup HandleTargetIndexChanged locking focusLock");
             lock (focusLock) {

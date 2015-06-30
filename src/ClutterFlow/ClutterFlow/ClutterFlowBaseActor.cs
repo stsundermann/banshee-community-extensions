@@ -72,7 +72,7 @@ namespace ClutterFlow
                 if (value != index) {
                     int old_index = index;
                     index = value;
-                    IsReactive = !(index < 0);
+                    Reactive = !(index < 0);
                     if (IndexChanged != null) {
                         IndexChanged (this, old_index, index);
                     }
@@ -94,18 +94,18 @@ namespace ClutterFlow
         public ClutterFlowBaseActor (CoverManager cover_manager) : base ()
         {
             this.cover_manager = cover_manager;
-            this.cover_manager.Add (this);
+            this.cover_manager.AddActor (this);
         }
 
         private bool disposed = false;
-        public override void Dispose ()
+        public void Dispose ()
         {
             if (disposed) {
                 return;
             }
             disposed = true;
 
-            cover_manager.Remove (this);
+            cover_manager.RemoveActor (this);
 
             base.Dispose ();
         }

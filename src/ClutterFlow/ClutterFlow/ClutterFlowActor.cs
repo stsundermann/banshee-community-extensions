@@ -29,6 +29,7 @@ using System;
 using Clutter;
 
 using GLib;
+using Gtk;
 
 namespace ClutterFlow
 {
@@ -63,7 +64,7 @@ namespace ClutterFlow
 
         protected bool CanUseShader {
             get {
-                return Clutter.Feature.Available (Clutter.FeatureFlags.ShadersGlsl);
+                return Clutter.Global.FeatureAvailable (Clutter.FeatureFlags.ShadersGlsl);
             }
         }
 
@@ -101,18 +102,18 @@ namespace ClutterFlow
         {
             this.ParentSet += HandleParentSet;
             this.LeaveEvent += HandleLeaveEvent;
-            this.ButtonPressEvent += HandleButtonPressEvent;
-            this.ButtonReleaseEvent += HandleButtonReleaseEvent;
+            this.ButtonPressed += HandleButtonPressEvent;
+            this.ButtonReleased += HandleButtonReleaseEvent;
 
             SetupActors ();
         }
 
-        public override void Dispose ()
+        public void Dispose ()
         {
             this.ParentSet -= HandleParentSet;
             this.LeaveEvent -= HandleLeaveEvent;
-            this.ButtonPressEvent -= HandleButtonPressEvent;
-            this.ButtonReleaseEvent -= HandleButtonReleaseEvent;
+            this.ButtonPressed -= HandleButtonPressEvent;
+            this.ButtonReleased -= HandleButtonReleaseEvent;
         }
 
         protected virtual void SetupActors ()
@@ -173,7 +174,7 @@ namespace ClutterFlow
         {
             if (cover == null) {
                 cover = new Clutter.CairoTexture((uint) CoverManager.TextureSize, (uint) CoverManager.TextureSize * 2);
-                Add (cover);
+                AddActor (cover);
                 cover.Show ();
                 cover.Realize ();
             }
@@ -203,7 +204,7 @@ namespace ClutterFlow
             if (!has_shader) {
                 if (shade==null) {
                     shade = new Clutter.Texture();
-                    Add (shade);
+                    AddActor (shade);
                     shade.Show ();
                     shade.Realize ();
                     if (Stage!=null)
@@ -228,9 +229,9 @@ namespace ClutterFlow
             if (!has_shader) {
                 shade.Opacity = opacity;
                 if (left)
-                    shade.SetRotation (RotateAxis.Y, 0, shade.Width*0.5f, shade.Height*0.25f, 0);
+                    shade.SetRotation (RotateAxis.YAxis, 0, shade.Width*0.5f, shade.Height*0.25f, 0);
                 else
-                    shade.SetRotation (RotateAxis.Y, 180, shade.Width*0.5f, shade.Height*0.25f, 0);
+                    shade.SetRotation (RotateAxis.YAxis, 180, shade.Width*0.5f, shade.Height*0.25f, 0);
             }
         }
 
@@ -243,7 +244,7 @@ namespace ClutterFlow
             return this;
         }
 
-        private void HandleNewCurrentCover (ClutterFlowBaseActor Actor, EventArgs args)
+        private void HandleNewCurrentCover (ClutterFlowBaseActor Actor, System.EventArgs args)
         {
             if (CoverManager.CurrentCover==this) {
                 CoverManager.NewCurrentCover -= HandleNewCurrentCover;
@@ -256,11 +257,11 @@ namespace ClutterFlow
             if (!shifted_outwards)
                 return;
             shifted_outwards = false;
-            Animation anm = Animatev ((ulong) Clutter.AnimationMode.EaseOutBack.value__, CoverManager.MaxAnimationSpan,
-                      new string[] { "anchor-x" }, new GLib.Value ((float) Width*0.5f));
+            Animation anm = Animatev ((ulong) Clutter.AnimationMode.EaseOutBack, CoverManager.MaxAnimationSpan,
+				new string[] { "anchor-x" }, new GLib.Value[] {new GLib.Value ((float) Width*0.5f)});
             if (!has_shader)
-                shade.AnimateWithTimelinev ((ulong) Clutter.AnimationMode.EaseOutSine.value__, anm.Timeline,
-                          new string[] { "anchor-x" }, new GLib.Value (0.0f));
+                shade.AnimateWithTimelinev ((ulong) Clutter.AnimationMode.EaseOutSine, anm.Timeline,
+					new string[] { "anchor-x" }, new GLib.Value[] {new GLib.Value (0.0f)});
         }
 
         protected virtual void SlideOut ()
@@ -269,18 +270,18 @@ namespace ClutterFlow
                 return;
             shifted_outwards = true;
             float x, y, z;
-            double angle = GetRotation(RotateAxis.Y, out x, out y, out z);
+            double angle = GetRotation(RotateAxis.YAxis, out x, out y, out z);
             float new_anchor_x = (float) (Width * (0.5f + 1.6f*Math.Tan (angle)));
-            Animation anm = Animatev ((ulong) Clutter.AnimationMode.EaseOutBack.value__, CoverManager.MaxAnimationSpan,
-                      new string[] { "anchor-x" }, new GLib.Value ((float) new_anchor_x));
+            Animation anm = Animatev ((ulong) Clutter.AnimationMode.EaseOutBack, CoverManager.MaxAnimationSpan,
+                        new string[] { "anchor-x" }, new GLib.Value[] {new GLib.Value((float) new_anchor_x)});
             if (!has_shader)
-                shade.AnimateWithTimelinev ((ulong) Clutter.AnimationMode.EaseOutSine.value__, anm.Timeline,
-                          new string[] { "anchor-x" }, new GLib.Value ((float) -new_anchor_x*0.5f));
+                shade.AnimateWithTimelinev ((ulong) Clutter.AnimationMode.EaseOutSine, anm.Timeline,
+                        new string[] { "anchor-x" }, new GLib.Value[] {new GLib.Value ((float) -new_anchor_x*0.5f)});
         }
         #endregion
 
         #region Event Handling
-        void HandleParentSet(object o, ParentSetArgs args)
+        void HandleParentSet(object o, Clutter.ParentSetArgs args)
         {
             if (this.Stage != null) {
                 if (delayed_shade_swap) SetShadeSwap ();
@@ -294,7 +295,7 @@ namespace ClutterFlow
             args.RetVal = true;
         }
 
-        protected virtual void HandleButtonReleaseEvent (object o, ButtonReleaseEventArgs args)
+        protected virtual void HandleButtonReleaseEvent (object o, ButtonReleasedArgs args)
         {
             if (args.Event.Button == 3) {
                 SlideIn ();
@@ -311,11 +312,11 @@ namespace ClutterFlow
             args.RetVal = true;
         }
 
-        protected virtual void HandleButtonPressEvent (object o, ButtonPressEventArgs args)
+        protected virtual void HandleButtonPressEvent (object o, ButtonPressedArgs args)
         {
             if (args.Event.Button == 3) {
                 float x, y;
-                Clutter.EventHelper.GetCoords (args.Event, out x, out y);
+                args.Event.GetCoords (out x, out y);
                 TransformStagePoint (x, y, out x, out y);
                 if (y < Height*0.5f)
                     SlideOut ();

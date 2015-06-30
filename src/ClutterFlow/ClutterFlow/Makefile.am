@@ -1,5 +1,5 @@
 ASSEMBLY = ClutterFlow
-LINK = $(COGL_SHARP_LIBS) $(CLUTTER_SHARP_LIBS) -r:Mono.Cairo -pkg:gtk-sharp-3.0
+LINK = $(COGL_SHARP_LIBS) $(CLUTTER_SHARP_LIBS) -pkg:gtk-sharp-3.0
 GMCS_FLAGS = -unsafe
 
 SOURCES =  \

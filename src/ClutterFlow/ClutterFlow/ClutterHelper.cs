@@ -42,6 +42,9 @@ namespace ClutterFlow
         private static extern void clutter_container_remove (System.IntPtr container, System.IntPtr actor);
         [DllImport ("libclutter-glx-1.0.so.0")]
         public static extern IntPtr cogl_texture_new_from_data (uint width, uint height, Cogl.TextureFlags flags, Cogl.PixelFormat format, Cogl.PixelFormat internal_format, uint rowstride, IntPtr data);
+        [DllImport ("libclutter-glx-1.0.so.0")]
+        public static extern IntPtr cogl_texture_new_with_size (uint width, uint height, Cogl.TextureFlags flags, Cogl.PixelFormat internal_format);
+
 
         [DllImport ("libclutter-glx-1.0.so.0")]
         public static extern void clutter_texture_set_cogl_texture (IntPtr texture, IntPtr cogl_tex);
@@ -57,8 +60,8 @@ namespace ClutterFlow
             Vertex[] verts = new Vertex [4];
             int cnt_verts = verts == null ? 0 : verts.Length;
             IntPtr[] native_verts = new IntPtr [cnt_verts];
-            for (int i = 0; i < cnt_verts; i++)
-                native_verts [i] = verts[i] == null ? IntPtr.Zero : verts[i].Handle;
+            //for (int i = 0; i < cnt_verts; i++)
+            //    native_verts [i] = verts[i] == null ? IntPtr.Zero : verts[i].Handle;
             ActorBox box = ActorBox.Zero;
             clutter_actor_get_abs_allocation_vertices (actor.Handle, native_verts);
             clutter_actor_box_from_vertices (ref box, native_verts);
@@ -86,9 +89,9 @@ namespace ClutterFlow
         }
         public static void RemoveAllFromGroup (Clutter.Group group)
         {
-            foreach (Actor actor in group) {
+            /*foreach (Actor actor in group) {
                 GC.SuppressFinalize (actor);
-            }
+            }*/
             clutter_group_remove_all (group.Handle);
         }
         public static void RemoveFromGroup (System.IntPtr group, Clutter.Actor actor)

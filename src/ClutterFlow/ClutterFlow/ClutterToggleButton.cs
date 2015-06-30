@@ -29,6 +29,7 @@ using System;
 using Cairo;
 
 using Clutter;
+using Gtk;
 
 
 namespace ClutterFlow.Buttons
@@ -38,9 +39,9 @@ namespace ClutterFlow.Buttons
     public abstract class ClutterToggleButton : ClutterButtonState
     {
 
-        public event EventHandler Toggled;
+        public event System.EventHandler Toggled;
         protected void InvokeToggled () {
-            if (Toggled!=null) Toggled (this, EventArgs.Empty);
+            if (Toggled!=null) Toggled (this, System.EventArgs.Empty);
         }
 
         //// <value>
@@ -104,8 +105,8 @@ namespace ClutterFlow.Buttons
         }
 
         protected override void Initialise () {
-            Add (passive_button);
-            Add (active_button);
+            AddActor (passive_button);
+            AddActor (active_button);
 
             base.Initialise ();
 
@@ -116,7 +117,7 @@ namespace ClutterFlow.Buttons
         }
 
         #region Event Handling
-        protected override void HandleButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+        protected override void HandleButtonReleaseEvent(object o, ButtonReleasedArgs args)
         {
             State = (state^4) & ~2;
             freeze_state = true; //freeze the state untill after the event has finished handling

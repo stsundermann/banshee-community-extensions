@@ -89,8 +89,8 @@ namespace ClutterFlow
             if (default_surface != null) {
                 ((IDisposable) default_surface).Dispose ();
             }
-            Cogl.Handle.Unref (default_texture);
-            Cogl.Handle.Unref (shade_texture);
+            //Cogl.Handle.Unref (default_texture);
+            //Cogl.Handle.Unref (shade_texture);
             default_texture = IntPtr.Zero;
             shade_texture = IntPtr.Zero;
         }
@@ -111,7 +111,7 @@ namespace ClutterFlow
                                                                  fm, Cogl.PixelFormat.Any, (uint) DefaultSurface.Stride, DefaultSurface.DataPtr);
                     }
                 } else {
-                    default_texture = Cogl.Texture.NewWithSize ((uint) texture_size, (uint) texture_size,
+                    default_texture = ClutterHelper.cogl_texture_new_with_size ((uint) texture_size, (uint) texture_size,
                                                              Cogl.TextureFlags.None, Cogl.PixelFormat.Any);
                 }
             }

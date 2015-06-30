@@ -215,11 +215,11 @@ namespace ClutterFlow
             CoverManager.Timeline.NewFrame -= HandleNewFrame;
 
             if (fadeInAnim != null) {
-                fadeInAnim.CompleteAnimation ();
+                fadeInAnim.EmitCompleted ();
                 fadeInAnim = null;
             }
             if (fadeOutAnim != null) {
-                fadeOutAnim.CompleteAnimation ();
+                fadeOutAnim.EmitCompleted ();
                 fadeOutAnim = null;
             }
         }
@@ -231,12 +231,12 @@ namespace ClutterFlow
             UpdateActors ();
         }
 
-        void HandleTargetIndexChanged (object sender, EventArgs e)
+        void HandleTargetIndexChanged (object sender, System.EventArgs e)
         {
             UpdateActors ();
         }
 
-        protected void HandleVisibleCoversChanged (object o, EventArgs args)
+        protected void HandleVisibleCoversChanged (object o, System.EventArgs args)
         {
             UpdateActors ();
         }
@@ -246,7 +246,7 @@ namespace ClutterFlow
 
         public void UpdateActors ()
         {
-            if (!HoldUpdates && coverManager.IsVisible) {
+            if (!HoldUpdates && coverManager.Visible) {
                 //only update covers that were visible at the previous & current progress:
 
                 double current_progress = Progress;
@@ -355,7 +355,7 @@ namespace ClutterFlow
         {
             actor.SetPosition ((left ? 0 : Width) + (SideMargin + progress * XStep)*(left ? 1 : -1), CenterY);
             actor.Depth = zFar - 3 + progress;
-            actor.SetRotation (Clutter.RotateAxis.Y, (left ? 1 : -1) * rotationAngle + OffsetRotationAngle, 0, 0, 0);
+            actor.SetRotation (Clutter.RotateAxis.YAxis, (left ? 1 : -1) * rotationAngle + OffsetRotationAngle, 0, 0, 0);
             actor.Opacity = (byte) (progress * 223);
             if (actor is ClutterFlowActor) {
                 (actor as ClutterFlowActor).SetShade (255, left);
@@ -366,7 +366,7 @@ namespace ClutterFlow
         {
             actor.SetPosition (CenterX + OffsetCenterX - (left ? 1 : -1) * ((1-progress)*(SideWidth + OffsetCenterX*(left ? 1 : -1)) + CenterMargin), CenterY);
             actor.Depth = zFar - 2 + progress;
-            actor.SetRotation (Clutter.RotateAxis.Y, (left ? 1 : -1) * rotationAngle + OffsetRotationAngle, 0, 0, 0);
+            actor.SetRotation (Clutter.RotateAxis.YAxis, (left ? 1 : -1) * rotationAngle + OffsetRotationAngle, 0, 0, 0);
             actor.Opacity = (byte) (255 - (1-progress)*32);
             if (actor is ClutterFlowActor) {
                 (actor as ClutterFlowActor).SetShade (255, left);
@@ -377,7 +377,7 @@ namespace ClutterFlow
         {
             actor.SetPosition ((float) (CenterX + OffsetCenterX + CenterMargin*progress), CenterY);
             actor.Depth = (float) (zFar + (zNear + OffsetZNear - zFar ) * (1 - Math.Abs(progress)));
-            actor.SetRotation (Clutter.RotateAxis.Y, -progress * rotationAngle + OffsetRotationAngle, 0, 0, 0);
+            actor.SetRotation (Clutter.RotateAxis.YAxis, -progress * rotationAngle + OffsetRotationAngle, 0, 0, 0);
             actor.Opacity = 255;
             if (actor is ClutterFlowActor) {
                 (actor as ClutterFlowActor).SetShade ((byte) Math.Abs(255*progress), (progress < 0));
@@ -392,9 +392,9 @@ namespace ClutterFlow
             public List<ClutterFlowBaseActor> PersistentCovers;
             public List<ClutterFlowBaseActor> NewCovers;
             public double NewProgress;
-            public EventHandler OnCompletedHandler;
+            public System.EventHandler OnCompletedHandler;
 
-            public TransitionStruct (List<ClutterFlowBaseActor> old_covers, List<ClutterFlowBaseActor> persistent_covers, List<ClutterFlowBaseActor> new_covers, double new_progress, EventHandler on_completed) {
+            public TransitionStruct (List<ClutterFlowBaseActor> old_covers, List<ClutterFlowBaseActor> persistent_covers, List<ClutterFlowBaseActor> new_covers, double new_progress, System.EventHandler on_completed) {
                 OldCovers = old_covers;
                 PersistentCovers = persistent_covers;
                 NewCovers = new_covers;
@@ -417,7 +417,7 @@ namespace ClutterFlow
         public void FadeCoversInAndOut (List<ClutterFlowBaseActor> old_covers,
                                         List<ClutterFlowBaseActor> persistent_covers,
                                         List<ClutterFlowBaseActor> new_covers,
-                                        EventHandler on_completed)
+                                        System.EventHandler on_completed)
         {
             FadeCoversInAndOut (old_covers, persistent_covers, new_covers, on_completed, Progress);
         }
@@ -433,7 +433,7 @@ namespace ClutterFlow
         private void FadeCoversInAndOut (List<ClutterFlowBaseActor> old_covers,
                                         List<ClutterFlowBaseActor> persistent_covers,
                                         List<ClutterFlowBaseActor> new_covers,
-                                        EventHandler on_completed, double new_progress)
+                                        System.EventHandler on_completed, double new_progress)
         {
 
             //Console.WriteLine ("FADE COVERS IN AND OUT");
@@ -443,11 +443,11 @@ namespace ClutterFlow
                 transition_queue.Enqueue(new TransitionStruct(old_covers, persistent_covers, new_covers, new_progress, on_completed));
             }
             if (fadeOutAnim!=null) {
-                fadeOutAnim.CompleteAnimation ();
+                fadeOutAnim.EmitCompleted ();
                 fadeOutAnim = null;
             }
             if (fadeInAnim!=null) {
-                fadeInAnim.CompleteAnimation ();
+                fadeInAnim.EmitCompleted ();
                 fadeInAnim = null;
             }
             if (t_slide!=null) {
@@ -525,12 +525,12 @@ namespace ClutterFlow
                 transition_score.Completed += on_completed;
                 transition_score.Start ();
             } else {
-                on_completed (this, EventArgs.Empty);
+                on_completed (this, System.EventArgs.Empty);
             }
             #endregion
         }
 
-        private void HandleScoreCompleted(object sender, EventArgs e)
+        private void HandleScoreCompleted(object sender, System.EventArgs e)
         {
             if (transition_queue != null && transition_queue.Count > 0)
                 FadeCoversInAndOut (transition_queue.Dequeue());
@@ -543,7 +543,7 @@ namespace ClutterFlow
                 MoveAndRotateActorCentrally (clone, 0);
                 double scaleX, scaleY; actor.GetScale (out scaleX, out scaleY); clone.SetScale (scaleX, scaleY);
 
-                ((Container) actor.Parent).Add (clone);
+                ((IContainer) actor.Parent).AddActor (clone);
                 clone.Hide ();
                 clone.Opacity = 255;
                 clone.Depth = ZNear+1;
@@ -553,11 +553,11 @@ namespace ClutterFlow
                 timeline.MarkerReached += delegate {
                     clone.ShowAll ();
                 };
-                Animation anmn = clone.AnimateWithTimelinev ((ulong) AnimationMode.EaseInExpo.value__, timeline, new string[] { "opacity" }, new GLib.Value ((byte) 50));
-                clone.AnimateWithTimelinev ((ulong) AnimationMode.EaseInExpo.value__, timeline, new string[] { "scale-x" }, new GLib.Value (scaleX*2));
-                clone.AnimateWithTimelinev ((ulong) AnimationMode.EaseInExpo.value__, timeline, new string[] { "scale-y" }, new GLib.Value (scaleY*2));
-                clone.AnimateWithTimelinev ((ulong) AnimationMode.EaseInExpo.value__, timeline, new string[] { "fixed::anchor-x" }, new GLib.Value (clone.Width/2));
-                clone.AnimateWithTimelinev ((ulong) AnimationMode.EaseInExpo.value__, timeline, new string[] { "fixed::anchor-y" }, new GLib.Value (clone.Height/4));
+                Animation anmn = clone.AnimateWithTimelinev ((ulong) AnimationMode.EaseInExpo, timeline, new string[] { "opacity" }, new GLib.Value[] {new GLib.Value((byte) 50)});
+                clone.AnimateWithTimelinev ((ulong) AnimationMode.EaseInExpo, timeline, new string[] { "scale-x" }, new GLib.Value[] {new GLib.Value(scaleX*2)});
+                clone.AnimateWithTimelinev ((ulong) AnimationMode.EaseInExpo, timeline, new string[] { "scale-y" }, new GLib.Value[] {new GLib.Value(scaleY*2)});
+                clone.AnimateWithTimelinev ((ulong) AnimationMode.EaseInExpo, timeline, new string[] { "fixed::anchor-x" }, new GLib.Value[] {new GLib.Value(clone.Width/2)});
+                clone.AnimateWithTimelinev ((ulong) AnimationMode.EaseInExpo, timeline, new string[] { "fixed::anchor-y" }, new GLib.Value[] {new GLib.Value(clone.Height/4)});
                 anmn.Completed += HandleClickedCloneCompleted;
             }
         }
@@ -567,7 +567,7 @@ namespace ClutterFlow
             CreateClickedCloneAnimation (actor, 0);
         }
 
-        protected void HandleClickedCloneCompleted (object sender, EventArgs e)
+        protected void HandleClickedCloneCompleted (object sender, System.EventArgs e)
         {
             if (sender is Animation && (sender as Animation).Object is Actor) {
                 Actor actor = (Actor) (sender as Animation).Object;
@@ -583,9 +583,9 @@ namespace ClutterFlow
         {
             actor.Show ();
             if (fadeOutAnim==null)
-                fadeOutAnim = actor.Animatev ((ulong) Clutter.AnimationMode.Linear.value__, CoverManager.MaxAnimationSpan*fade_slow, new string[] { "opacity" }, new GLib.Value ((byte) 0));
+                fadeOutAnim = actor.Animatev ((ulong) Clutter.AnimationMode.Linear, CoverManager.MaxAnimationSpan*fade_slow, new string[] { "opacity" }, new GLib.Value[] {new GLib.Value((byte) 0)});
             else
-                actor.AnimateWithTimelinev ((ulong) Clutter.AnimationMode.Linear.value__, fadeOutAnim.Timeline, new string[] { "opacity" }, new GLib.Value ((byte) 0));
+                actor.AnimateWithTimelinev ((ulong) Clutter.AnimationMode.Linear, fadeOutAnim.Timeline, new string[] { "opacity" }, new GLib.Value[] {new GLib.Value((byte) 0)});
         }
 
         protected Animation fadeInAnim;
@@ -595,9 +595,9 @@ namespace ClutterFlow
             actor.Opacity = 0;
             actor.Show();
             if (fadeInAnim==null)
-                fadeInAnim = actor.Animatev ((ulong) Clutter.AnimationMode.Linear.value__, CoverManager.MaxAnimationSpan*fade_slow, new string[] { "opacity" }, new GLib.Value ((byte) opacity));
+                fadeInAnim = actor.Animatev ((ulong) Clutter.AnimationMode.Linear, CoverManager.MaxAnimationSpan*fade_slow, new string[] { "opacity" }, new GLib.Value[] {new GLib.Value((byte) opacity)});
             else
-                actor.AnimateWithTimelinev ((ulong) Clutter.AnimationMode.Linear.value__, fadeInAnim.Timeline, new string[] { "opacity" }, new GLib.Value ((byte) opacity));
+                actor.AnimateWithTimelinev ((ulong) Clutter.AnimationMode.Linear, fadeInAnim.Timeline, new string[] { "opacity" }, new GLib.Value[] {new GLib.Value((byte) opacity)});
         }
         #endregion
     }

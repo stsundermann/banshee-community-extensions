@@ -100,15 +100,15 @@ namespace ClutterFlow.Slider
 
             button = new ClutterSliderHandleButton((uint) Height,(uint) Height,state);
             button.BubbleEvents = true;
-            Add(button);
+            AddActor (button);
             button.Show();
             UpdatePosition();
 
-            IsReactive = true;
-            MotionEvent += HandleMotionEvent;
-            ButtonPressEvent += HandleButtonPressEvent;
-            ButtonReleaseEvent += HandleButtonReleaseEvent;
-            EnterEvent += HandleEnterEvent;
+            Reactive = true;
+            Motion += HandleMotionEvent;
+            ButtonPressed += HandleButtonPressEvent;
+            ButtonReleased += HandleButtonReleaseEvent;
+            Entered += HandleEnterEvent;
             LeaveEvent += HandleLeaveEvent;
         }
 
@@ -121,7 +121,7 @@ namespace ClutterFlow.Slider
         }
 
         #region Event Handling
-        protected virtual void HandleEnterEvent (object o, EnterEventArgs args)
+        protected virtual void HandleEnterEvent (object o, EnteredArgs args)
         {
             button.State |= 1;
             args.RetVal = !BubbleEvents;
@@ -134,12 +134,12 @@ namespace ClutterFlow.Slider
             base.SetSize (width, height);
         }
 
-        protected virtual void HandleButtonPressEvent (object o, ButtonPressEventArgs args)
+        protected virtual void HandleButtonPressEvent (object o, ButtonPressedArgs args)
         {
-            Clutter.Grab.Pointer(this);
+            Global.GrabPointer (this);
 
             float x1; float y1; float x2;
-            Clutter.EventHelper.GetCoords (args.Event, out x1, out y1);
+            args.Event.GetCoords (out x1, out y1);
             button.GetTransformedPosition (out x2, out y1);
 
             if ((x2 + button.Width) < x1) {
@@ -153,11 +153,11 @@ namespace ClutterFlow.Slider
             args.RetVal = true;
         }
 
-        protected virtual void HandleButtonReleaseEvent (object o, ButtonReleaseEventArgs args)
+        protected virtual void HandleButtonReleaseEvent (object o, ButtonReleasedArgs args)
         {
             if (args.Event.Source!=this) button.State = 0;
             else button.State &= 1;
-            Clutter.Ungrab.Pointer ();
+            Global.UngrabPointer ();
             InvokeSliderHasChanged ();
             args.RetVal = true;
         }
@@ -168,15 +168,15 @@ namespace ClutterFlow.Slider
             args.RetVal = !BubbleEvents;
         }
 
-        protected void HandleMotionEvent (object o, MotionEventArgs args)
+        protected void HandleMotionEvent (object o, Clutter.MotionArgs args)
         {
             float x1; float y1;
-            Clutter.EventHelper.GetCoords (args.Event, out x1, out y1);
+            args.Event.GetCoords (out x1, out y1);
 
             float tx; float ty;
             GetTransformedPosition (out tx, out ty);
 
-            if (x1 <=  tx+Width && x1 >= tx && (args.Event.ModifierState.value__ & ModifierType.Button1Mask.value__)!=0 && (button.State & 2)!=0) {
+            if (x1 <=  tx+Width && x1 >= tx && (args.Event.State & ModifierType.Button1Mask)!=0 && (button.State & 2)!=0) {
                 float deltaX = (x1 - mouseX);
                 SetValueSilently (posval + (deltaX / (width - height)));
             }

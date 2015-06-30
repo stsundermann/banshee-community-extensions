@@ -138,7 +138,7 @@ namespace Banshee.ClutterFlow
         }
 
         protected bool disposed = false;
-        public override void Dispose ()
+        public void Dispose ()
         {
             if (disposed) {
                 return;
@@ -189,7 +189,7 @@ namespace Banshee.ClutterFlow
 
             container.Pack1 (frame, false, false);
             main_expander.Activated += OnExpander;
-            main_expander.SizeRequested += HandleSizeRequested;
+            main_expander.SizeAllocated += HandleSizeRequested;
             container.Pack2 (main_expander, true, false);
 
             container.Position = 175;
@@ -221,7 +221,7 @@ namespace Banshee.ClutterFlow
                 if (frame != null) container.Remove (frame);
                 if (main_expander != null) container.Remove (main_expander);
                 main_expander.Activated -= OnExpander;
-                main_expander.SizeRequested -= HandleSizeRequested;
+                main_expander.SizeAllocated -= HandleSizeRequested;
                 Remove (container);
             }
         }
@@ -279,7 +279,7 @@ namespace Banshee.ClutterFlow
                 container.Position = -1;
         }
 
-        void HandleSizeRequested(object o, SizeRequestedArgs args)
+        void HandleSizeRequested(object o, SizeAllocatedArgs args)
         {
             if (!main_expander.Expanded)
                 container.Position = container.Allocation.Height - main_expander.LabelWidget.HeightRequest;

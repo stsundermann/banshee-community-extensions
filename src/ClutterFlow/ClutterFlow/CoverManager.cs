@@ -36,7 +36,7 @@ using GLib;
 
 namespace ClutterFlow
 {
-    public delegate void ActorEventHandler<T>(T actor, EventArgs e) where T : ClutterFlowBaseActor;
+    public delegate void ActorEventHandler<T>(T actor, System.EventArgs e) where T : ClutterFlowBaseActor;
 
     public class CoverManager : Clutter.Group {
 
@@ -46,7 +46,7 @@ namespace ClutterFlow
         {
             var handler = ActorActivated;
             if (handler != null) {
-                handler (cover, EventArgs.Empty);
+                handler (cover, System.EventArgs.Empty);
             }
         }
 
@@ -55,43 +55,43 @@ namespace ClutterFlow
         {
             var handler = NewCurrentCover;
             if (handler != null) {
-                handler (cover, EventArgs.Empty);
+                handler (cover, System.EventArgs.Empty);
             }
         }
 
-        public event EventHandler<EventArgs> CoversChanged;
+        public event EventHandler<System.EventArgs> CoversChanged;
         protected void InvokeCoversChanged ()
         {
             var handler = CoversChanged;
             if (handler != null) {
-                handler (this, EventArgs.Empty);
+                handler (this, System.EventArgs.Empty);
             }
         }
 
-        public event EventHandler<EventArgs> TargetIndexChanged;
+		public event EventHandler<System.EventArgs> TargetIndexChanged;
         protected void InvokeTargetIndexChanged ()
         {
             var handler = TargetIndexChanged;
             if (handler != null) {
-                handler (this, EventArgs.Empty);
+                handler (this, System.EventArgs.Empty);
             }
         }
 
-        public event EventHandler<EventArgs> VisibleCoversChanged;
+		public event EventHandler<System.EventArgs> VisibleCoversChanged;
         protected void InvokeVisibleCoversChanged ()
         {
             var handler = VisibleCoversChanged;
             if (handler != null) {
-                handler (this, EventArgs.Empty);
+                handler (this, System.EventArgs.Empty);
             }
         }
 
-        public event EventHandler<EventArgs> LetterLookupChanged;
+		public event EventHandler<System.EventArgs> LetterLookupChanged;
         protected void InvokeLetterLookupChanged ()
         {
             var handler = LetterLookupChanged;
             if (handler != null) {
-                handler (this, EventArgs.Empty);
+                handler (this, System.EventArgs.Empty);
             }
         }
 
@@ -265,7 +265,7 @@ namespace ClutterFlow
             texture_holder = new TextureHolder (texture_size, get_default_surface);
         }
 
-        public override void Dispose ()
+        public void Dispose ()
         {
             if (reload_timeout > 0) {
                 GLib.Source.Remove (reload_timeout);
@@ -421,7 +421,7 @@ namespace ClutterFlow
                 foreach (ClutterFlowBaseActor cover in new_covers)
                     Console.WriteLine("\t- " + cover.Label.Replace("\n", " - "));*/
 
-                EventHandler update_target = delegate (object o, EventArgs e) {
+                System.EventHandler update_target = delegate (object o, System.EventArgs e) {
                     Timeline.Play ();
                     InvokeCoversChanged();
                 };

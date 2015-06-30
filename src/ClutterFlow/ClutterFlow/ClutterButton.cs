@@ -62,10 +62,10 @@ namespace ClutterFlow.Buttons
 
         #region Methods
         protected virtual void Initialise () {
-            IsReactive = true;
-            ButtonPressEvent += HandleButtonPressEvent;
-            ButtonReleaseEvent += HandleButtonReleaseEvent;
-            EnterEvent += HandleEnterEvent;
+            Reactive = true;
+            ButtonPressed += HandleButtonPressEvent;
+            ButtonReleased += HandleButtonReleaseEvent;
+            Entered += HandleEnterEvent;
             LeaveEvent += HandleLeaveEvent;
         }
 
@@ -73,19 +73,19 @@ namespace ClutterFlow.Buttons
         #endregion
 
         #region Event Handling
-        protected virtual void HandleEnterEvent(object o, EnterEventArgs args)
+        protected virtual void HandleEnterEvent(object o, EnteredArgs args)
         {
             State |= 1;
             args.RetVal = !BubbleEvents;
         }
 
-        protected virtual void HandleButtonPressEvent(object o, ButtonPressEventArgs args)
+        protected virtual void HandleButtonPressEvent(object o, ButtonPressedArgs args)
         {
             State |= 2;
             args.RetVal = !BubbleEvents;
         }
 
-        protected virtual void HandleButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+        protected virtual void HandleButtonReleaseEvent(object o, ButtonReleasedArgs args)
         {
             State &= ~2;
             args.RetVal = !BubbleEvents;
@@ -142,11 +142,11 @@ namespace ClutterFlow.Buttons
                 if (textures[i] != null) {
                     GC.SuppressFinalize (textures[i]);
                     if (textures[i].Parent != null) {
-                        ((Container) textures[i].Parent).Remove(textures[i]);
+                        ((IContainer) textures[i].Parent).RemoveActor (textures[i]);
                     }
                 }
                 textures[i] = new Clutter.CairoTexture((uint) Width,(uint) Height);
-                Add (textures[i]);
+                AddActor (textures[i]);
                 CreateTexture (textures[i], (byte) i);
             }
         }

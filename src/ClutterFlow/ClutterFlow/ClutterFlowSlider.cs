@@ -51,27 +51,27 @@ namespace ClutterFlow.Slider
         #region Initialisation
         public ClutterFlowSlider (float width, float height, CoverManager coverManager)
         {
-            this.IsReactive = true;
+            this.Reactive = true;
             this.coverManager = coverManager;
             CoverManager.CoversChanged += HandleCoversChanged;
             CoverManager.TargetIndexChanged += HandleTargetIndexChanged;
             CoverManager.LetterLookupChanged += HandleLetterLookupChanged;
 
             this.SetSize (width, height);
-            this.EnterEvent += HandleEnterEvent;
+            this.Entered += HandleEnterEvent;
             this.LeaveEvent += HandleLeaveEvent;
 
             InitChildren ();
             Update ();
         }
 
-        public override void Dispose ()
+        public void Dispose ()
         {
             CoverManager.CoversChanged -= HandleCoversChanged;
             CoverManager.TargetIndexChanged -= HandleTargetIndexChanged;
             CoverManager.LetterLookupChanged -= HandleLetterLookupChanged;
 
-            EnterEvent += HandleEnterEvent;
+            Entered += HandleEnterEvent;
             LeaveEvent += HandleLeaveEvent;
 
             slider.Dispose ();
@@ -87,14 +87,14 @@ namespace ClutterFlow.Slider
             slider.SetPosition (0, 0);
             slider.SliderHasChanged += HandleSliderHasChanged;
             slider.SliderHasMoved += HandleSliderHasMoved;
-            Add (slider);
+            AddActor (slider);
             slider.Show ();
 
             alphabet = new AlphabetBar ((uint) (Width-Height*1.5), (uint) (Height*0.4f));
             alphabet.SetAnchorPoint (alphabet.Width*0.5f, alphabet.Height);
             alphabet.SetPosition (Width*0.5f, Height);
             alphabet.LetterClicked += HandleAlphabetLetterClicked;
-            Add (alphabet);
+            AddActor (alphabet);
             alphabet.Opacity = (byte) 0;
             alphabet.Show ();
         }
@@ -112,25 +112,25 @@ namespace ClutterFlow.Slider
 
 
         #region Event Handling
-        protected void HandleEnterEvent (object o, EnterEventArgs args)
+        protected void HandleEnterEvent (object o, EnteredArgs args)
         {
-            alphabet.Animatev ((ulong) AnimationMode.EaseOutExpo.value__, CoverManager.MaxAnimationSpan, new string[] { "opacity" }, new GLib.Value((byte) 255));
+            alphabet.Animatev ((ulong) AnimationMode.EaseOutExpo, CoverManager.MaxAnimationSpan, new string[] { "opacity" }, new GLib.Value[] {new GLib.Value((byte) 255)});
             args.RetVal = true;
         }
 
         protected void HandleLeaveEvent (object o, LeaveEventArgs args)
         {
-            alphabet.Animatev ((ulong) AnimationMode.EaseOutExpo.value__, CoverManager.MaxAnimationSpan, new string[] { "opacity" }, new GLib.Value((byte) 0));
+            salphabet.Animatev ((ulong) AnimationMode.EaseOutExpo, CoverManager.MaxAnimationSpan, new string[] { "opacity" }, new GLib.Value[] {new GLib.Value((byte) 0)});
             args.RetVal = true;
         }
 
-        protected void HandleCoversChanged (object sender, EventArgs e)
+        protected void HandleCoversChanged (object sender, System.EventArgs e)
         {
             slider.UpdateBounds (coverManager.TotalCovers, coverManager.TargetIndex);
         }
 
         bool ignoreTargetIndexOnce = false;
-        protected void HandleTargetIndexChanged(object sender, EventArgs e)
+        protected void HandleTargetIndexChanged(object sender, System.EventArgs e)
         {
             if (coverManager.TargetActor!=null) {
                 slider.Label = coverManager.TargetActor.SortLabel.ToUpper ().Substring (0,1);
@@ -141,13 +141,13 @@ namespace ClutterFlow.Slider
             ignoreTargetIndexOnce = false;
         }
 
-        protected void HandleSliderHasMoved(object sender, EventArgs e)
+        protected void HandleSliderHasMoved(object sender, System.EventArgs e)
         {
             ignoreTargetIndexOnce = true;
             coverManager.TargetIndex = slider.HandlePostionFromIndex;
         }
 
-        protected void HandleSliderHasChanged(object sender, EventArgs e)
+        protected void HandleSliderHasChanged(object sender, System.EventArgs e)
         {
             coverManager.TargetIndex = slider.HandlePostionFromIndex;
         }
@@ -162,7 +162,7 @@ namespace ClutterFlow.Slider
             CoverManager.TargetIndex = CoverManager.LetterLookup[e.Letter];
         }
 
-        protected void HandleLetterLookupChanged (object sender, EventArgs e)
+        protected void HandleLetterLookupChanged (object sender, System.EventArgs e)
         {
             foreach (AlphabetChars key in Enum.GetValues(typeof(AlphabetChars)))
                 alphabet[key].Disabled = CoverManager.LetterLookup[key]==-1;
