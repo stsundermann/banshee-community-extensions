@@ -54,7 +54,6 @@ namespace ClutterFlow
         [DllImport ("libclutter-glx-1.0.so.0")]
         private static extern void clutter_actor_box_from_vertices (ref ActorBox box, IntPtr[] vtx);
 
-
         public unsafe static ActorBox GetAbsAllocationBox (Actor actor)
         {
             Vertex[] verts = new Vertex [4];
@@ -67,16 +66,6 @@ namespace ClutterFlow
             clutter_actor_box_from_vertices (ref box, native_verts);
 
             return box;
-        }
-
-        [DllImport ("libclutter-gtk-0.10.so.0")]
-        private static extern Clutter.InitError gtk_clutter_init (IntPtr argc, IntPtr argv);
-        public static void Init ()
-        {
-            Clutter.Threads.Init ();
-            if (ClutterHelper.gtk_clutter_init (IntPtr.Zero, IntPtr.Zero) != InitError.Success) {
-                throw new NotSupportedException ("Unable to initialize GtkClutter");
-            }
         }
 
         public static void Quit ()
