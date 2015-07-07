@@ -95,7 +95,7 @@ namespace Banshee.ClutterFlow
 
         void IExtensionService.Initialize ()
         {
-            ClutterHelper.Init ();
+            Clutter.GTK.Global.Init ();
 
             preference_service = ServiceManager.Get<PreferenceService> ();
             action_service = ServiceManager.Get<InterfaceActionService> ();
