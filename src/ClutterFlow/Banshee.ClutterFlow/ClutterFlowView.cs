@@ -463,16 +463,17 @@ namespace Banshee.ClutterFlow
                 }
                 dragging = false;
             }
-            mouse_x = ((MotionEvent)args.Event).X;
-            mouse_y = ((MotionEvent)args.Event).Y;
+            mouse_x = ((MotionEvent)Clutter.Event.GetEvent(args.Event.Handle)).X;
+            mouse_y = ((MotionEvent)Clutter.Event.GetEvent(args.Event.Handle)).Y;
 
             args.RetVal = dragging;
         }
 
         private void HandleScroll (object o, Clutter.ScrolledArgs args)
         {
-            if (args.Event.Direction == Clutter.ScrollDirection.Down
-                || args.Event.Direction == Clutter.ScrollDirection.Left) {
+            var evnt = (ScrollEvent)Clutter.Event.GetEvent (((Clutter.Event)args.Args[0]).Handle);
+            if (evnt.Direction == Clutter.ScrollDirection.Down
+                || evnt.Direction == Clutter.ScrollDirection.Left) {
                 Scroll (true);
             } else {
                 Scroll (false);
