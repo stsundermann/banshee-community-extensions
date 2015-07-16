@@ -34,24 +34,24 @@ namespace ClutterFlow
 {
     public static class ClutterHelper
     {
-        [DllImport ("libclutter-glx-1.0.so.0")]
+        [DllImport ("libclutter-1.0.so")]
         private static extern void clutter_actor_destroy (System.IntPtr actor);
-        [DllImport ("libclutter-glx-1.0.so.0")]
+        [DllImport ("libclutter-1.0.so")]
         private static extern void clutter_group_remove_all (System.IntPtr group);
-        [DllImport ("libclutter-glx-1.0.so.0")]
+        [DllImport ("libclutter-1.0.so")]
         private static extern void clutter_container_remove (System.IntPtr container, System.IntPtr actor);
-        [DllImport ("libclutter-glx-1.0.so.0")]
+        [DllImport ("libclutter-1.0.so")]
         public static extern IntPtr cogl_texture_new_from_data (uint width, uint height, Cogl.TextureFlags flags, Cogl.PixelFormat format, Cogl.PixelFormat internal_format, uint rowstride, IntPtr data);
-        [DllImport ("libclutter-glx-1.0.so.0")]
+        [DllImport ("libclutter-1.0.so")]
         public static extern IntPtr cogl_texture_new_with_size (uint width, uint height, Cogl.TextureFlags flags, Cogl.PixelFormat internal_format);
 
 
-        [DllImport ("libclutter-glx-1.0.so.0")]
+        [DllImport ("libclutter-1.0.so")]
         public static extern void clutter_texture_set_cogl_texture (IntPtr texture, IntPtr cogl_tex);
 
-        [DllImport("libclutter-glx-1.0.so.0")]
+        [DllImport("libclutter-1.0.so")]
         private static extern void clutter_actor_get_abs_allocation_vertices(IntPtr raw, IntPtr[] verts);
-        [DllImport ("libclutter-glx-1.0.so.0")]
+        [DllImport ("libclutter-1.0.so")]
         private static extern void clutter_actor_box_from_vertices (ref ActorBox box, IntPtr[] vtx);
 
         public unsafe static ActorBox GetAbsAllocationBox (Actor actor)

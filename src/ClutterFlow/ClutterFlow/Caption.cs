@@ -63,7 +63,7 @@ namespace ClutterFlow.Captions
         }
 
         #region Methods
-        [DllImport("libclutter-glx-1.0.so.0")]
+        [DllImport("libclutter-1.0.so")]
         static extern IntPtr clutter_text_new ();
 
         public virtual void FadeOut ()
