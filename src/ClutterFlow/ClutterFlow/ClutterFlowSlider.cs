@@ -120,7 +120,7 @@ namespace ClutterFlow.Slider
 
         protected void HandleLeaveEvent (object o, LeaveEventArgs args)
         {
-            salphabet.Animatev ((ulong) AnimationMode.EaseOutExpo, CoverManager.MaxAnimationSpan, new string[] { "opacity" }, new GLib.Value[] {new GLib.Value((byte) 0)});
+            alphabet.Animatev ((ulong) AnimationMode.EaseOutExpo, CoverManager.MaxAnimationSpan, new string[] { "opacity" }, new GLib.Value[] {new GLib.Value((byte) 0)});
             args.RetVal = true;
         }
 
